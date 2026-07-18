@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Home, Users, Target, Activity, Lightbulb, Settings, FileText, Database,
   Bell, Search, BookOpen, PenTool, Brain, Code, User, ArrowRight,
-  TrendingUp, Briefcase, Award, Zap, BriefcaseBusiness, CloudRain, Shield, Quote, Heart, UploadCloud, Monitor, CheckCircle, XCircle, Download, Filter, Link, RefreshCw
+  TrendingUp, Briefcase, Award, Zap, BriefcaseBusiness, CloudRain, Shield, Quote, Heart, UploadCloud, Monitor, CheckCircle, XCircle, Download, Filter, Link, RefreshCw, Lock, Sliders
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
@@ -467,6 +467,8 @@ export default function App() {
           <ReportsTab />
         ) : activeTab === 'Data Management' ? (
           <DataManagementTab />
+        ) : activeTab === 'Settings' ? (
+          <SettingsTab />
         ) : activeTab === 'Prediction' ? (
           <PredictionTab 
              formData={formData} 
@@ -1736,6 +1738,97 @@ function DataManagementTab() {
           </div>
         </div>
 
+      </div>
+    </div>
+  );
+}
+
+function SettingsTab() {
+  return (
+    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+      <div style={{marginBottom: 32}}>
+        <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>System Settings</h2>
+        <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Manage your account, set model preferences, and configure security protocols.</p>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 32}}>
+        
+        {/* Left: Settings Nav */}
+        <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
+          <button style={{display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left'}}>
+            <User size={18}/> Profile & Account
+          </button>
+          <button style={{display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'transparent', color: 'var(--text-gray)', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left', transition: 'background 0.2s'}} onMouseOver={e=>e.currentTarget.style.background='#f1f5f9'} onMouseOut={e=>e.currentTarget.style.background='transparent'}>
+            <Sliders size={18}/> AI Model Preferences
+          </button>
+          <button style={{display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'transparent', color: 'var(--text-gray)', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left', transition: 'background 0.2s'}} onMouseOver={e=>e.currentTarget.style.background='#f1f5f9'} onMouseOut={e=>e.currentTarget.style.background='transparent'}>
+            <Bell size={18}/> Notifications
+          </button>
+          <button style={{display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'transparent', color: 'var(--text-gray)', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left', transition: 'background 0.2s'}} onMouseOver={e=>e.currentTarget.style.background='#f1f5f9'} onMouseOut={e=>e.currentTarget.style.background='transparent'}>
+            <Lock size={18}/> Security & API Keys
+          </button>
+        </div>
+
+        {/* Right: Settings Content */}
+        <div style={{display: 'flex', flexDirection: 'column', gap: 24}}>
+          
+          <div className="card">
+            <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 20}}>Profile Information</h3>
+            
+            <div style={{display: 'flex', alignItems: 'center', gap: 24, marginBottom: 24}}>
+              <img src="https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=fff" style={{width: 80, height: 80, borderRadius: '50%'}} alt="Admin"/>
+              <div>
+                <button className="btn-secondary" style={{padding: '8px 16px', fontSize: 13, marginBottom: 8}}>Upload New Photo</button>
+                <div style={{fontSize: 11, color: 'var(--text-gray)'}}>JPG or PNG, Max 2MB</div>
+              </div>
+            </div>
+
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20}}>
+              <div>
+                <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Full Name</label>
+                <input type="text" className="modal-input" defaultValue="Admin User" style={{width: '100%'}}/>
+              </div>
+              <div>
+                <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Email Address</label>
+                <input type="email" className="modal-input" defaultValue="admin@placementcell.edu" style={{width: '100%'}}/>
+              </div>
+            </div>
+            <div>
+              <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Role / Title</label>
+              <input type="text" className="modal-input" defaultValue="Head of Training and Placements" style={{width: '100%'}}/>
+            </div>
+          </div>
+
+          <div className="card">
+            <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 20}}>Email Notifications</h3>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div>
+                  <div style={{fontSize: 14, fontWeight: 700, color: 'var(--text-dark)'}}>Data Sync Alerts</div>
+                  <div style={{fontSize: 12, color: 'var(--text-gray)', marginTop: 4}}>Get notified if a scheduled ERP sync fails.</div>
+                </div>
+                <div style={{width: 40, height: 24, background: '#10b981', borderRadius: 12, position: 'relative', cursor: 'pointer'}}>
+                  <div style={{width: 20, height: 20, background: 'white', borderRadius: '50%', position: 'absolute', top: 2, right: 2, boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}></div>
+                </div>
+              </div>
+              <div style={{height: 1, background: '#f1f5f9'}}></div>
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div>
+                  <div style={{fontSize: 14, fontWeight: 700, color: 'var(--text-dark)'}}>Model Drift Warnings</div>
+                  <div style={{fontSize: 12, color: 'var(--text-gray)', marginTop: 4}}>Receive an email when model accuracy drops below 85%.</div>
+                </div>
+                <div style={{width: 40, height: 24, background: '#10b981', borderRadius: 12, position: 'relative', cursor: 'pointer'}}>
+                  <div style={{width: 20, height: 20, background: 'white', borderRadius: '50%', position: 'absolute', top: 2, right: 2, boxShadow: '0 2px 4px rgba(0,0,0,0.1)'}}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+            <button className="btn-primary">Save Changes</button>
+          </div>
+
+        </div>
       </div>
     </div>
   );
