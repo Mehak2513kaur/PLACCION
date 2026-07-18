@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  PieChart, Pie, Cell, BarChart, Bar
+  PieChart, Pie, Cell, BarChart, Bar, AreaChart, Area, Tooltip, Legend
 } from 'recharts';
 import './App.css';
 
@@ -454,6 +454,8 @@ export default function App() {
           </>
         ) : activeTab === 'Students' ? (
           <StudentsTab />
+        ) : activeTab === 'Analytics' ? (
+          <AnalyticsTab />
         ) : activeTab === 'Prediction' ? (
           <PredictionTab 
              formData={formData} 
@@ -910,6 +912,144 @@ function PredictionTab({
           </div>
         </div>
 
+      </div>
+    </div>
+  );
+}
+
+function AnalyticsTab() {
+  const salaryData = [
+    { range: '< 5 LPA', count: 120 },
+    { range: '5-8 LPA', count: 450 },
+    { range: '8-12 LPA', count: 320 },
+    { range: '12-18 LPA', count: 180 },
+    { range: '18-25 LPA', count: 65 },
+    { range: '25+ LPA', count: 25 },
+  ];
+
+  const trendData = [
+    { year: '2019', placed: 65, average: 4.5 },
+    { year: '2020', placed: 68, average: 5.2 },
+    { year: '2021', placed: 75, average: 6.8 },
+    { year: '2022', placed: 82, average: 7.5 },
+    { year: '2023', placed: 88, average: 8.2 },
+    { year: '2024', placed: 92, average: 9.1 },
+  ];
+
+  const companyData = [
+    { name: 'Product Based', value: 45 },
+    { name: 'Service Based', value: 35 },
+    { name: 'Startups', value: 15 },
+    { name: 'Consulting', value: 5 },
+  ];
+  
+  const COLORS = ['#5a5ce6', '#10b981', '#f59e0b', '#ec4899'];
+
+  return (
+    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32}}>
+        <div>
+          <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>Advanced Analytics</h2>
+          <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Deep dive into placement trends, salary distributions, and historical data.</p>
+        </div>
+        <div style={{display: 'flex', gap: 12}}>
+          <select className="modal-input" style={{width: 150}}><option>Batch 2024</option><option>Batch 2023</option><option>All Time</option></select>
+          <button className="btn-primary" style={{padding: '0 20px'}}><Activity size={16} style={{marginRight: 8}}/> Export Report</button>
+        </div>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginBottom: 24}}>
+        <div className="card" style={{padding: 24, borderTop: '4px solid #5a5ce6'}}>
+          <div style={{fontSize: 13, color: 'var(--text-gray)', fontWeight: 600}}>Highest Package</div>
+          <div style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)', marginTop: 8}}>₹ 42.5<span style={{fontSize: 16, color: 'var(--text-muted)'}}> LPA</span></div>
+          <div style={{fontSize: 12, color: '#10b981', marginTop: 8, fontWeight: 700}}>↑ 12% from last year</div>
+        </div>
+        <div className="card" style={{padding: 24, borderTop: '4px solid #10b981'}}>
+          <div style={{fontSize: 13, color: 'var(--text-gray)', fontWeight: 600}}>Average Package</div>
+          <div style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)', marginTop: 8}}>₹ 9.1<span style={{fontSize: 16, color: 'var(--text-muted)'}}> LPA</span></div>
+          <div style={{fontSize: 12, color: '#10b981', marginTop: 8, fontWeight: 700}}>↑ 8% from last year</div>
+        </div>
+        <div className="card" style={{padding: 24, borderTop: '4px solid #f59e0b'}}>
+          <div style={{fontSize: 13, color: 'var(--text-gray)', fontWeight: 600}}>Total Offers Made</div>
+          <div style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)', marginTop: 8}}>1,452</div>
+          <div style={{fontSize: 12, color: '#10b981', marginTop: 8, fontWeight: 700}}>1.4 offers per student</div>
+        </div>
+        <div className="card" style={{padding: 24, borderTop: '4px solid #ec4899'}}>
+          <div style={{fontSize: 13, color: 'var(--text-gray)', fontWeight: 600}}>Top Recruiting Sector</div>
+          <div style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)', marginTop: 8}}>FinTech</div>
+          <div style={{fontSize: 12, color: 'var(--text-gray)', marginTop: 8, fontWeight: 600}}>32% of total placements</div>
+        </div>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginBottom: 24}}>
+        <div className="card">
+          <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 24}}>Placement & Salary Trends (2019-2024)</h3>
+          <div style={{height: 350}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={trendData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorPlaced" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#5a5ce6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#5a5ce6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <Tooltip contentStyle={{borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+                <Legend verticalAlign="top" height={36} iconType="circle" />
+                <Area type="monotone" dataKey="placed" name="Placement %" stroke="#5a5ce6" strokeWidth={3} fillOpacity={1} fill="url(#colorPlaced)" />
+                <Area type="monotone" dataKey="average" name="Avg Salary (LPA)" stroke="#10b981" strokeWidth={3} fill="none" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="card">
+          <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 24}}>Company Categories</h3>
+          <div style={{height: 300}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={companyData} cx="50%" cy="50%" innerRadius={80} outerRadius={110} paddingAngle={5} dataKey="value" stroke="none">
+                  {companyData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={{borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16}}>
+              {companyData.map((entry, index) => (
+                <div key={entry.name} style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                    <div style={{width: 10, height: 10, borderRadius: '50%', background: COLORS[index]}}></div>
+                    <div style={{fontSize: 13, color: 'var(--text-gray)', fontWeight: 500}}>{entry.name}</div>
+                  </div>
+                  <div style={{fontSize: 13, fontWeight: 700, color: 'var(--text-dark)'}}>{entry.value}%</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 24}}>Salary Distribution (Batch 2024)</h3>
+        <div style={{height: 300}}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={salaryData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+              <XAxis dataKey="range" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+              <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+              <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+              <Bar dataKey="count" name="Number of Students" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={40}>
+                {salaryData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={index > 3 ? '#10b981' : index > 1 ? '#3b82f6' : '#94a3b8'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
