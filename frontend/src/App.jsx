@@ -444,6 +444,8 @@ export default function App() {
               </div>
             </footer>
           </>
+        ) : activeTab === 'Students' ? (
+          <StudentsTab />
         ) : (
           /* Placeholder for other pages */
           <div className="card" style={{minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
@@ -523,6 +525,204 @@ function SkillRow({ icon, c, label, val, max, displayVal }) {
       <div className="skill-label">{label}</div>
       <div className="skill-bar"><div className="skill-fill" style={{width: `${p}%`, background: c}}></div></div>
       <div className="skill-val">{displayVal?.toFixed(1) || val?.toFixed(1)}/10</div>
+    </div>
+  );
+}
+
+function StudentsTab() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStu, setSelectedStu] = useState(null);
+  
+  const mockStudents = [
+    { 
+      id: 'STU001', name: 'Aarav Sharma', branch: 'CSE', cgpa: 8.9, prob: 92, status: 'Placed', role: 'Software Engineer', 
+      img: 'https://ui-avatars.com/api/?name=Aarav+Sharma&background=0D8ABC&color=fff',
+      result: {
+        strong_areas: [{title: "Excellent CGPA", desc: "8.9 CGPA is very competitive."}, {title: "Strong Coding Skills", desc: "Proficient in Java & React."}],
+        needs_improvement: [{title: "Aptitude Score", desc: "Can improve quantitative skills."}],
+        career_matches: [{role: 'Software Engineer', match: 92}, {role: 'Data Analyst', match: 81}]
+      }
+    },
+    { 
+      id: 'STU002', name: 'Priya Patel', branch: 'IT', cgpa: 7.8, prob: 65, status: 'Unplaced', role: 'Data Analyst', 
+      img: 'https://ui-avatars.com/api/?name=Priya+Patel&background=F59E0B&color=fff',
+      result: {
+        strong_areas: [{title: "Good Communication", desc: "Strong soft skills for analyst roles."}],
+        needs_improvement: [{title: "Low Projects Count", desc: "Needs more portfolio projects."}, {title: "DSA Score", desc: "Needs improvement for technical rounds."}],
+        career_matches: [{role: 'Data Analyst', match: 72}, {role: 'Software Engineer', match: 58}]
+      }
+    },
+    { 
+      id: 'STU003', name: 'Rohan Gupta', branch: 'ECE', cgpa: 8.2, prob: 88, status: 'Placed', role: 'ML Engineer', 
+      img: 'https://ui-avatars.com/api/?name=Rohan+Gupta&background=10B981&color=fff',
+      result: {
+        strong_areas: [{title: "High ML Knowledge", desc: "Strong grasp of Deep Learning."}, {title: "Math Background", desc: "Great for Data Science."}],
+        needs_improvement: [],
+        career_matches: [{role: 'ML Engineer', match: 88}, {role: 'Data Analyst', match: 83}]
+      }
+    },
+    { 
+      id: 'STU004', name: 'Sneha Reddy', branch: 'CSE', cgpa: 9.1, prob: 96, status: 'Placed', role: 'Software Engineer', 
+      img: 'https://ui-avatars.com/api/?name=Sneha+Reddy&background=EC4899&color=fff',
+      result: {
+        strong_areas: [{title: "Perfect DSA Score", desc: "Excellent problem solving."}, {title: "Multiple Internships", desc: "2+ industry experiences."}],
+        needs_improvement: [],
+        career_matches: [{role: 'Software Engineer', match: 96}, {role: 'Business Analyst', match: 60}]
+      }
+    },
+    { 
+      id: 'STU005', name: 'Vikram Singh', branch: 'ME', cgpa: 7.1, prob: 42, status: 'Unplaced', role: 'Business Analyst', 
+      img: 'https://ui-avatars.com/api/?name=Vikram+Singh&background=6366F1&color=fff',
+      result: {
+        strong_areas: [{title: "Leadership", desc: "President of the robotics club."}],
+        needs_improvement: [{title: "Technical Skills", desc: "Needs to learn modern software stacks."}],
+        career_matches: [{role: 'Business Analyst', match: 65}, {role: 'Data Analyst', match: 55}]
+      }
+    },
+    { 
+      id: 'STU007', name: 'Karan Desai', branch: 'CSE', cgpa: 6.8, prob: 35, status: 'At Risk', role: 'QA Engineer', 
+      img: 'https://ui-avatars.com/api/?name=Karan+Desai&background=EF4444&color=fff',
+      result: {
+        strong_areas: [{title: "Active in Clubs", desc: "Good organizational skills."}],
+        needs_improvement: [{title: "Low CGPA", desc: "Below the 7.0 cutoff for many companies."}, {title: "Poor Coding Skills", desc: "Needs urgent technical training."}],
+        career_matches: [{role: 'QA Engineer', match: 55}, {role: 'Software Engineer', match: 35}]
+      }
+    },
+  ];
+
+  const filtered = mockStudents.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()) || s.id.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  return (
+    <div className="card" style={{padding: '24px'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24}}>
+        <div>
+          <h2 style={{fontSize: 20, fontWeight: 800, color: 'var(--text-dark)'}}>Student Directory</h2>
+          <p style={{fontSize: 13, color: 'var(--text-gray)', marginTop: 4}}>Manage and view AI predictions for all registered students.</p>
+        </div>
+        <div className="search-box" style={{width: 300, background: '#f8fafc'}}>
+          <Search size={16} color="var(--text-muted)"/>
+          <input 
+            placeholder="Search by name or ID..." 
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="table-container">
+        <table className="students-table">
+          <thead>
+            <tr>
+              <th>Student Details</th>
+              <th>Branch</th>
+              <th>CGPA</th>
+              <th>Predicted Role</th>
+              <th>AI Probability</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(stu => (
+              <tr key={stu.id}>
+                <td>
+                  <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+                    <img src={stu.img} alt={stu.name} style={{width: 36, height: 36, borderRadius: '50%'}} />
+                    <div>
+                      <div style={{fontWeight: 700, color: 'var(--text-dark)', fontSize: 13}}>{stu.name}</div>
+                      <div style={{fontSize: 11, color: 'var(--text-muted)'}}>{stu.id}</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span className="branch-badge">{stu.branch}</span></td>
+                <td style={{fontWeight: 700, color: 'var(--text-dark)'}}>{stu.cgpa}</td>
+                <td style={{fontSize: 13, color: 'var(--text-gray)', fontWeight: 500}}>{stu.role}</td>
+                <td>
+                  <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                    <div className="prob-bar-bg" style={{width: 60, height: 6, background: '#f1f5f9', borderRadius: 3}}>
+                      <div className="prob-bar-fill" style={{width: `${stu.prob}%`, height: '100%', background: stu.prob > 80 ? '#10b981' : stu.prob > 50 ? '#f59e0b' : '#ef4444', borderRadius: 3}}></div>
+                    </div>
+                    <span style={{fontSize: 12, fontWeight: 700, color: stu.prob > 80 ? '#10b981' : stu.prob > 50 ? '#f59e0b' : '#ef4444'}}>{stu.prob}%</span>
+                  </div>
+                </td>
+                <td>
+                  <span className={`status-badge ${stu.status.toLowerCase().replace(' ', '-')}`}>
+                    {stu.status}
+                  </span>
+                </td>
+                <td>
+                  <button className="btn-secondary" style={{padding: '6px 12px', fontSize: 11}} onClick={() => setSelectedStu(stu)}>View Profile</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {filtered.length === 0 && <div style={{padding: 40, textAlign: 'center', color: 'var(--text-muted)', fontSize: 14}}>No students found.</div>}
+      </div>
+
+      {selectedStu && (
+        <div className="modal-overlay" onClick={() => setSelectedStu(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{maxWidth: 700}}>
+            <div style={{display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24, borderBottom: '1px solid #f1f5f9', paddingBottom: 16}}>
+               <img src={selectedStu.img} alt="img" style={{width: 56, height: 56, borderRadius: '50%'}} />
+               <div>
+                  <h3 style={{fontWeight: 800, fontSize: 20}}>{selectedStu.name} - AI Analysis</h3>
+                  <div style={{fontSize: 13, color: 'var(--text-gray)', marginTop: 4}}>{selectedStu.branch} | CGPA: {selectedStu.cgpa} | ID: {selectedStu.id}</div>
+               </div>
+               <div style={{marginLeft: 'auto'}}>
+                 <div style={{fontSize: 24, fontWeight: 800, color: selectedStu.prob > 80 ? '#10b981' : selectedStu.prob > 50 ? '#f59e0b' : '#ef4444'}}>{selectedStu.prob}%</div>
+                 <div style={{fontSize: 11, fontWeight: 700, color: 'var(--text-gray)'}}>Placement Probability</div>
+               </div>
+            </div>
+            
+            <div className="explainable-ai-grid" style={{marginBottom: 24}}>
+              <div className="strength-box">
+                <div className="box-title" style={{color: '#10b981'}}><CheckCircle size={16}/> Strong Areas</div>
+                <div className="box-items">
+                  {selectedStu.result.strong_areas.map((item, i) => (
+                    <div key={i} className="explain-item">
+                      <div className="explain-title">{item.title}</div>
+                      <div className="explain-desc">{item.desc}</div>
+                    </div>
+                  ))}
+                  {selectedStu.result.strong_areas.length === 0 && <div className="explain-desc">No major strong areas identified.</div>}
+                </div>
+              </div>
+              
+              <div className="weakness-box">
+                <div className="box-title" style={{color: '#ef4444'}}><XCircle size={16}/> Needs Improvement</div>
+                <div className="box-items">
+                  {selectedStu.result.needs_improvement.map((item, i) => (
+                    <div key={i} className="explain-item">
+                      <div className="explain-title">{item.title}</div>
+                      <div className="explain-desc">{item.desc}</div>
+                    </div>
+                  ))}
+                  {selectedStu.result.needs_improvement.length === 0 && <div className="explain-desc">Profile is well-rounded!</div>}
+                </div>
+              </div>
+            </div>
+            
+            <div style={{marginTop: 24}}>
+              <div className="box-title" style={{color: 'var(--text-dark)', marginBottom: 16}}><Briefcase size={16}/> Recruiter Match Scores</div>
+              <div className="career-match-list">
+                {selectedStu.result.career_matches.map((role, i) => (
+                  <div key={i} className="career-match-item">
+                    <div className="role-header">
+                      <span className="role-name">{role.role}</span>
+                      <span className="role-score">{role.match}% Match</span>
+                    </div>
+                    <div className="match-bar-bg">
+                      <div className="match-bar-fill" style={{width: `${role.match}%`, background: role.match > 90 ? '#10b981' : role.match > 80 ? '#f59e0b' : '#3b82f6'}}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button className="btn-secondary" style={{width: '100%', marginTop: 24}} onClick={() => setSelectedStu(null)}>Close Profile</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
