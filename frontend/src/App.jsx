@@ -1744,37 +1744,14 @@ function DataManagementTab() {
 }
 
 function SettingsTab() {
-  return (
-    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
-      <div style={{marginBottom: 32}}>
-        <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>System Settings</h2>
-        <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Manage your account, set model preferences, and configure security protocols.</p>
-      </div>
+  const [activeSetting, setActiveSetting] = useState('Profile');
 
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 32}}>
-        
-        {/* Left: Settings Nav */}
-        <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-          <button style={{display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left'}}>
-            <User size={18}/> Profile & Account
-          </button>
-          <button style={{display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'transparent', color: 'var(--text-gray)', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left', transition: 'background 0.2s'}} onMouseOver={e=>e.currentTarget.style.background='#f1f5f9'} onMouseOut={e=>e.currentTarget.style.background='transparent'}>
-            <Sliders size={18}/> AI Model Preferences
-          </button>
-          <button style={{display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'transparent', color: 'var(--text-gray)', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left', transition: 'background 0.2s'}} onMouseOver={e=>e.currentTarget.style.background='#f1f5f9'} onMouseOut={e=>e.currentTarget.style.background='transparent'}>
-            <Bell size={18}/> Notifications
-          </button>
-          <button style={{display: 'flex', alignItems: 'center', gap: 12, padding: '16px', background: 'transparent', color: 'var(--text-gray)', border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left', transition: 'background 0.2s'}} onMouseOver={e=>e.currentTarget.style.background='#f1f5f9'} onMouseOut={e=>e.currentTarget.style.background='transparent'}>
-            <Lock size={18}/> Security & API Keys
-          </button>
-        </div>
-
-        {/* Right: Settings Content */}
-        <div style={{display: 'flex', flexDirection: 'column', gap: 24}}>
-          
+  const renderContent = () => {
+    switch(activeSetting) {
+      case 'Profile':
+        return (
           <div className="card">
             <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 20}}>Profile Information</h3>
-            
             <div style={{display: 'flex', alignItems: 'center', gap: 24, marginBottom: 24}}>
               <img src="https://ui-avatars.com/api/?name=Admin+User&background=3b82f6&color=fff" style={{width: 80, height: 80, borderRadius: '50%'}} alt="Admin"/>
               <div>
@@ -1782,7 +1759,6 @@ function SettingsTab() {
                 <div style={{fontSize: 11, color: 'var(--text-gray)'}}>JPG or PNG, Max 2MB</div>
               </div>
             </div>
-
             <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20}}>
               <div>
                 <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Full Name</label>
@@ -1798,7 +1774,34 @@ function SettingsTab() {
               <input type="text" className="modal-input" defaultValue="Head of Training and Placements" style={{width: '100%'}}/>
             </div>
           </div>
-
+        );
+      case 'AI':
+        return (
+          <div className="card">
+            <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 20}}>AI Model Preferences</h3>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+              <div>
+                <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Active Prediction Model</label>
+                <select className="modal-input" style={{width: '100%'}}>
+                  <option>XGBoost (v2.4) - Recommended</option>
+                  <option>Random Forest (Legacy)</option>
+                  <option>Logistic Regression (Baseline)</option>
+                </select>
+              </div>
+              <div>
+                <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Confidence Threshold</label>
+                <input type="range" min="50" max="95" defaultValue="80" style={{width: '100%', accentColor: 'var(--primary)'}}/>
+                <div style={{display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-gray)', marginTop: 4}}>
+                  <span>Lenient (50%)</span>
+                  <span>Current: 80%</span>
+                  <span>Strict (95%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 'Notifications':
+        return (
           <div className="card">
             <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 20}}>Email Notifications</h3>
             <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
@@ -1823,11 +1826,72 @@ function SettingsTab() {
               </div>
             </div>
           </div>
+        );
+      case 'Security':
+        return (
+          <div className="card">
+            <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 20}}>Security & API Keys</h3>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+              <div>
+                <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Change Password</label>
+                <input type="password" placeholder="Current Password" className="modal-input" style={{width: '100%', marginBottom: 12}}/>
+                <input type="password" placeholder="New Password" className="modal-input" style={{width: '100%'}}/>
+              </div>
+              <div style={{height: 1, background: '#f1f5f9', margin: '8px 0'}}></div>
+              <div>
+                <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>API Key (For External Integrations)</label>
+                <div style={{display: 'flex', gap: 12}}>
+                  <input type="text" readOnly value="api_key_xxxxxxxxxxxxxxxxxx" className="modal-input" style={{flex: 1, background: '#f8fafc', color: '#64748b'}}/>
+                  <button className="btn-secondary">Regenerate</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
+  const getNavStyle = (tab) => ({
+    display: 'flex', alignItems: 'center', gap: 12, padding: '16px',
+    background: activeSetting === tab ? 'var(--primary)' : 'transparent',
+    color: activeSetting === tab ? 'white' : 'var(--text-gray)',
+    border: 'none', borderRadius: 12, fontWeight: 700, fontSize: 15, cursor: 'pointer', textAlign: 'left',
+    transition: 'background 0.2s'
+  });
+
+  return (
+    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+      <div style={{marginBottom: 32}}>
+        <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>System Settings</h2>
+        <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Manage your account, set model preferences, and configure security protocols.</p>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 32}}>
+        
+        {/* Left: Settings Nav */}
+        <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
+          <button style={getNavStyle('Profile')} onClick={() => setActiveSetting('Profile')}>
+            <User size={18}/> Profile & Account
+          </button>
+          <button style={getNavStyle('AI')} onClick={() => setActiveSetting('AI')}>
+            <Sliders size={18}/> AI Model Preferences
+          </button>
+          <button style={getNavStyle('Notifications')} onClick={() => setActiveSetting('Notifications')}>
+            <Bell size={18}/> Notifications
+          </button>
+          <button style={getNavStyle('Security')} onClick={() => setActiveSetting('Security')}>
+            <Lock size={18}/> Security & API Keys
+          </button>
+        </div>
+
+        {/* Right: Settings Content */}
+        <div style={{display: 'flex', flexDirection: 'column', gap: 24}}>
+          {renderContent()}
           <div style={{display: 'flex', justifyContent: 'flex-end'}}>
             <button className="btn-primary">Save Changes</button>
           </div>
-
         </div>
       </div>
     </div>
