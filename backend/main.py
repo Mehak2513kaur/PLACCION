@@ -38,10 +38,22 @@ class StudentData(BaseModel):
     system_design: float
     internships: int
     projects_count: int
-    certifications: int
-    hackathons: int
-    open_source_contributions: int
-    extracurriculars: int
+    certifications: int = 1
+    hackathons: int = 0
+    open_source_contributions: int = 0
+    extracurriculars: int = 0
+    # Extended 50-field parameters
+    tenth_percentage: float = 80.0
+    twelfth_percentage: float = 80.0
+    leetcode_solved: int = 0
+    python: bool = False
+    java: bool = False
+    cpp: bool = False
+    react: bool = False
+    devops: bool = False
+    sql: bool = False
+    teamwork_rating: float = 7.0
+    problem_solving_rating: float = 7.0
 
 @app.post("/upload_resume")
 async def upload_resume(file: UploadFile = File(...)):
@@ -55,7 +67,15 @@ def predict_placement(data: StudentData):
     if not model_pipeline:
         return {"error": "Model not loaded on server."}
 
-    input_data = data.dict()
+    # Extract ONLY the 16 features the ML model was trained on to prevent crashes
+    model_features = [
+        "branch", "college_tier", "cgpa", "backlogs", "coding_skills", "dsa_score", 
+        "aptitude_score", "communication_skills", "ml_knowledge", "system_design", 
+        "internships", "projects_count", "certifications", "hackathons", 
+        "open_source_contributions", "extracurriculars"
+    ]
+    
+    input_data = {k: getattr(data, k) for k in model_features}
     df_data = {k: [v] for k, v in input_data.items()}
     input_df = pd.DataFrame(df_data)
 
@@ -65,6 +85,22 @@ def predict_placement(data: StudentData):
     # Explainable AI - Strengths & Weaknesses
     strong_areas = []
     needs_improvement = []
+
+    # New 50-field Advanced Heuristics
+    if data.leetcode_solved >= 100:
+        strong_areas.append({"title": "Competitive Programming", "desc": f"Outstanding! Solved {data.leetcode_solved} LeetCode problems."})
+    
+    tech_stack = [t.capitalize() for t, v in zip(['python','java','cpp','react','devops','sql'], [data.python, data.java, data.cpp, data.react, data.devops, data.sql]) if v]
+    if len(tech_stack) > 2:
+        strong_areas.append({"title": "Diverse Tech Stack", "desc": f"Strong knowledge across {', '.join(tech_stack)}."})
+    elif len(tech_stack) > 0:
+        strong_areas.append({"title": "Core Technical Skills", "desc": f"Proficient in {', '.join(tech_stack)}."})
+        
+    if data.teamwork_rating >= 8.5:
+        strong_areas.append({"title": "Excellent Teamwork", "desc": "Highly collaborative and team-oriented."})
+        
+    if data.tenth_percentage < 70 or data.twelfth_percentage < 70:
+        needs_improvement.append({"title": "Past Academics", "desc": "Pre-college academic scores are below average."})
 
     if data.cgpa >= 8.5:
         strong_areas.append({"title": "Excellent CGPA", "desc": "Your academic performance is very strong."})
