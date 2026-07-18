@@ -92,6 +92,7 @@ export default function App() {
       const data = await response.json();
       setPredictionResult(data);
       showToast("Prediction Generated Successfully!");
+      setActiveTab('Dashboard'); // Redirect to dashboard to see results
     } catch (e) {
       console.error(e);
       showToast("Error generating prediction. Check backend.");
@@ -453,6 +454,20 @@ export default function App() {
           </>
         ) : activeTab === 'Students' ? (
           <StudentsTab />
+        ) : activeTab === 'Prediction' ? (
+          <PredictionTab 
+             formData={formData} 
+             setFormData={setFormData}
+             handlePredict={handlePredict}
+             predictionResult={predictionResult}
+             setPredictionResult={setPredictionResult}
+             isLoading={isLoading}
+             isUploading={isUploading}
+             handleFileUpload={handleFileUpload}
+             fileInputRef={fileInputRef}
+             wizardStep={wizardStep}
+             setWizardStep={setWizardStep}
+          />
         ) : (
           /* Placeholder for other pages */
           <div className="card" style={{minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
@@ -785,6 +800,117 @@ function StudentsTab() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function PredictionTab({ 
+  formData, setFormData, handlePredict, predictionResult, setPredictionResult, 
+  isLoading, isUploading, handleFileUpload, fileInputRef, wizardStep, setWizardStep 
+}) {
+  return (
+    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+      <div style={{marginBottom: 32}}>
+        <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>AI Placement Predictor Engine</h2>
+        <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Upload a resume to let our AI auto-fill the fields, or manually enter the 50+ parameters for a highly accurate placement probability.</p>
+      </div>
+
+      <div style={{display: 'flex', gap: 24, flexDirection: 'column'}}>
+        {/* Top: Smart Resume Parsing Card */}
+        <div className="card" style={{background: 'linear-gradient(135deg, #eef2ff 0%, #ffffff 100%)', border: '1px solid #e0e7ff'}}>
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div>
+              <h3 style={{fontSize: 18, fontWeight: 800, color: 'var(--primary)'}}>Step 1: Auto-Fill via Resume AI</h3>
+              <p style={{fontSize: 13, color: 'var(--text-gray)', marginTop: 6, maxWidth: 500}}>Our NLP engine automatically extracts your skills, education, and projects directly from your resume and fills the 50-parameter form below.</p>
+            </div>
+            
+            <input type="file" accept=".pdf" style={{display: 'none'}} ref={fileInputRef} onChange={handleFileUpload} />
+            <button className="btn-primary" style={{padding: '12px 24px', fontSize: 14, boxShadow: '0 8px 16px rgba(90, 92, 230, 0.2)'}} onClick={() => fileInputRef.current.click()} disabled={isUploading}>
+              {isUploading ? 'Analyzing Document with AI...' : <><UploadCloud size={18}/> Upload PDF Resume</>}
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom: The Massive 50-Field Wizard */}
+        <div className="card">
+          <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8}}>
+            <h3 style={{fontWeight: 800, fontSize: 18}}>Step 2: Comprehensive Profile Verification</h3>
+            <span style={{background: '#eef2ff', color: 'var(--primary)', padding: '2px 8px', borderRadius: 12, fontSize: 11, fontWeight: 700}}>50+ Params</span>
+          </div>
+          <p style={{fontSize: 13, color: 'var(--text-gray)', marginBottom: 24}}>Please verify the extracted information and fill any gaps to maximize prediction accuracy.</p>
+          
+          {/* Wizard Tabs */}
+          <div style={{display: 'flex', gap: 10, borderBottom: '2px solid #f1f5f9', paddingBottom: 16, marginBottom: 24, overflowX: 'auto'}}>
+            {['Academic Details', 'Technical Skills', 'Experience & Projects', 'Soft Skills'].map((step, idx) => (
+              <div key={step} onClick={() => setWizardStep(idx+1)} style={{cursor: 'pointer', padding: '10px 18px', borderRadius: 24, fontSize: 13, fontWeight: 700, background: wizardStep === idx+1 ? 'var(--primary)' : '#f8fafc', color: wizardStep === idx+1 ? '#fff' : 'var(--text-gray)', transition: 'all 0.2s', whiteSpace: 'nowrap'}}>
+                {idx+1}. {step}
+              </div>
+            ))}
+          </div>
+          
+          {/* Wizard Body */}
+          <div className="modal-grid" style={{alignItems: 'flex-start'}}>
+            {wizardStep === 1 && (
+              <>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Branch</label><select className="modal-input" value={formData.branch} onChange={e=>setFormData({...formData, branch: e.target.value})}><option>CSE</option><option>IT</option><option>ECE</option><option>ME</option><option>CIVIL</option></select></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>CGPA (Out of 10)</label><input type="number" className="modal-input" value={formData.cgpa} onChange={e=>setFormData({...formData, cgpa: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>10th Percentage</label><input type="number" className="modal-input" value={formData.tenth_percentage} onChange={e=>setFormData({...formData, tenth_percentage: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>12th Percentage</label><input type="number" className="modal-input" value={formData.twelfth_percentage} onChange={e=>setFormData({...formData, twelfth_percentage: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Active Backlogs</label><input type="number" className="modal-input" value={formData.backlogs} onChange={e=>setFormData({...formData, backlogs: parseInt(e.target.value)||0})} /></div>
+              </>
+            )}
+            {wizardStep === 2 && (
+              <>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Coding Skills (1-10)</label><input type="number" className="modal-input" value={formData.coding_skills} onChange={e=>setFormData({...formData, coding_skills: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>DSA Score (1-10)</label><input type="number" className="modal-input" value={formData.dsa_score} onChange={e=>setFormData({...formData, dsa_score: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>ML Knowledge (1-10)</label><input type="number" className="modal-input" value={formData.ml_knowledge} onChange={e=>setFormData({...formData, ml_knowledge: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>System Design (1-10)</label><input type="number" className="modal-input" value={formData.system_design} onChange={e=>setFormData({...formData, system_design: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>LeetCode Problems Solved</label><input type="number" className="modal-input" value={formData.leetcode_solved} onChange={e=>setFormData({...formData, leetcode_solved: parseInt(e.target.value)||0})} /></div>
+                
+                <div style={{gridColumn: '1 / -1', marginTop: 12}}>
+                  <label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Known Technologies (Check all that apply)</label>
+                  <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+                    {['python', 'java', 'cpp', 'react', 'devops', 'sql'].map(tech => (
+                      <label key={tech} style={{display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, background: formData[tech] ? '#eef2ff' : '#f8fafc', color: formData[tech] ? 'var(--primary)' : 'var(--text-gray)', padding: '8px 14px', borderRadius: 8, border: `1px solid ${formData[tech] ? 'var(--primary)' : '#e2e8f0'}`, cursor: 'pointer', fontWeight: 600}}>
+                        <input type="checkbox" style={{accentColor: 'var(--primary)'}} checked={formData[tech]} onChange={e=>setFormData({...formData, [tech]: e.target.checked})} /> {tech.toUpperCase()}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+            {wizardStep === 3 && (
+              <>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Internships Completed</label><input type="number" className="modal-input" value={formData.internships} onChange={e=>setFormData({...formData, internships: parseInt(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Projects Built</label><input type="number" className="modal-input" value={formData.projects_count} onChange={e=>setFormData({...formData, projects_count: parseInt(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Hackathons Participated</label><input type="number" className="modal-input" value={formData.hackathons} onChange={e=>setFormData({...formData, hackathons: parseInt(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Open Source PRs Merged</label><input type="number" className="modal-input" value={formData.open_source_contributions} onChange={e=>setFormData({...formData, open_source_contributions: parseInt(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Professional Certifications</label><input type="number" className="modal-input" value={formData.certifications} onChange={e=>setFormData({...formData, certifications: parseInt(e.target.value)||0})} /></div>
+              </>
+            )}
+            {wizardStep === 4 && (
+              <>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Aptitude Score (1-100)</label><input type="number" className="modal-input" value={formData.aptitude_score} onChange={e=>setFormData({...formData, aptitude_score: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Communication Skills (1-10)</label><input type="number" className="modal-input" value={formData.communication_skills} onChange={e=>setFormData({...formData, communication_skills: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Teamwork Rating (1-10)</label><input type="number" className="modal-input" value={formData.teamwork_rating} onChange={e=>setFormData({...formData, teamwork_rating: parseFloat(e.target.value)||0})} /></div>
+                <div><label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 4, display: 'block'}}>Problem Solving (1-10)</label><input type="number" className="modal-input" value={formData.problem_solving_rating} onChange={e=>setFormData({...formData, problem_solving_rating: parseFloat(e.target.value)||0})} /></div>
+              </>
+            )}
+          </div>
+
+          <div style={{display: 'flex', justifyContent: 'space-between', marginTop: 40, paddingTop: 24, borderTop: '1px solid #f1f5f9'}}>
+             <button className="btn-secondary" style={{padding: '12px 24px', fontSize: 14}} disabled={wizardStep === 1} onClick={() => setWizardStep(prev => prev-1)}>← Previous Step</button>
+             {wizardStep < 4 ? (
+               <button className="btn-primary" style={{padding: '12px 24px', fontSize: 14}} onClick={() => setWizardStep(prev => prev+1)}>Next Step →</button>
+             ) : (
+               <button className="btn-primary" style={{padding: '12px 24px', fontSize: 14, background: '#10b981', borderColor: '#10b981', color: 'white'}} onClick={() => handlePredict(formData)} disabled={isLoading}>
+                  {isLoading ? 'Running Prediction Engine...' : <div style={{display: 'flex', alignItems: 'center', gap: 8}}><Zap size={18}/> Predict Placement Result</div>}
+               </button>
+             )}
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }
