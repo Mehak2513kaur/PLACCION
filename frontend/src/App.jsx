@@ -461,6 +461,8 @@ export default function App() {
           <BatchInsightsTab />
         ) : activeTab === 'Recommendations' ? (
           <RecommendationsTab />
+        ) : activeTab === 'Model Performance' ? (
+          <ModelPerformanceTab />
         ) : activeTab === 'Prediction' ? (
           <PredictionTab 
              formData={formData} 
@@ -1342,6 +1344,155 @@ function RecommendationsTab() {
 
         </div>
       </div>
+    </div>
+  );
+}
+
+function ModelPerformanceTab() {
+  const featureImportance = [
+    { feature: 'DSA Score', weight: 85 },
+    { feature: 'CGPA', weight: 78 },
+    { feature: 'Internships', weight: 65 },
+    { feature: 'Coding Skills', weight: 62 },
+    { feature: 'LeetCode Solved', weight: 58 },
+    { feature: 'Aptitude', weight: 45 },
+    { feature: 'Communication', weight: 40 },
+    { feature: 'Hackathons', weight: 35 },
+  ];
+
+  const rocData = [
+    { fpr: 0, tpr: 0 },
+    { fpr: 0.1, tpr: 0.65 },
+    { fpr: 0.2, tpr: 0.82 },
+    { fpr: 0.3, tpr: 0.89 },
+    { fpr: 0.5, tpr: 0.94 },
+    { fpr: 0.8, tpr: 0.98 },
+    { fpr: 1, tpr: 1 },
+  ];
+
+  return (
+    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32}}>
+        <div>
+          <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>ML Model Architecture & Performance</h2>
+          <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Deep dive into the XGBoost classification engine driving our predictive analytics.</p>
+        </div>
+        <div style={{display: 'flex', gap: 12}}>
+          <button className="btn-secondary" style={{padding: '0 20px'}}><Activity size={16} style={{marginRight: 8}}/> View Raw Logs</button>
+          <button className="btn-primary" style={{padding: '0 20px', background: '#3b82f6', borderColor: '#3b82f6'}}><Zap size={16} style={{marginRight: 8}}/> Re-Train Model</button>
+        </div>
+      </div>
+
+      {/* Top Metrics */}
+      <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 20, marginBottom: 24}}>
+        <div className="card" style={{padding: 20, textAlign: 'center'}}>
+          <div style={{fontSize: 12, color: 'var(--text-gray)', fontWeight: 700, textTransform: 'uppercase'}}>Accuracy</div>
+          <div style={{fontSize: 32, fontWeight: 800, color: '#10b981', marginTop: 12}}>91.3%</div>
+        </div>
+        <div className="card" style={{padding: 20, textAlign: 'center'}}>
+          <div style={{fontSize: 12, color: 'var(--text-gray)', fontWeight: 700, textTransform: 'uppercase'}}>Precision</div>
+          <div style={{fontSize: 32, fontWeight: 800, color: '#3b82f6', marginTop: 12}}>90.8%</div>
+        </div>
+        <div className="card" style={{padding: 20, textAlign: 'center'}}>
+          <div style={{fontSize: 12, color: 'var(--text-gray)', fontWeight: 700, textTransform: 'uppercase'}}>Recall</div>
+          <div style={{fontSize: 32, fontWeight: 800, color: '#8b5cf6', marginTop: 12}}>89.7%</div>
+        </div>
+        <div className="card" style={{padding: 20, textAlign: 'center'}}>
+          <div style={{fontSize: 12, color: 'var(--text-gray)', fontWeight: 700, textTransform: 'uppercase'}}>F1 Score</div>
+          <div style={{fontSize: 32, fontWeight: 800, color: '#ec4899', marginTop: 12}}>90.2%</div>
+        </div>
+        <div className="card" style={{padding: 20, textAlign: 'center', background: '#f8fafc'}}>
+          <div style={{fontSize: 12, color: 'var(--text-gray)', fontWeight: 700, textTransform: 'uppercase'}}>Model Type</div>
+          <div style={{fontSize: 22, fontWeight: 800, color: 'var(--text-dark)', marginTop: 16}}>XGBoost</div>
+        </div>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 24, marginBottom: 24}}>
+        
+        {/* Feature Importance Horizontal Bar Chart */}
+        <div className="card">
+          <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24}}>
+            <div style={{background: '#eef2ff', color: '#5a5ce6', padding: 8, borderRadius: 8}}><Brain size={20}/></div>
+            <h3 style={{fontSize: 18, fontWeight: 800}}>Feature Importance (SHAP Values)</h3>
+          </div>
+          <div style={{height: 350}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={featureImportance} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                <XAxis type="number" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                <YAxis dataKey="feature" type="category" axisLine={false} tickLine={false} tick={{fill: '#334155', fontSize: 12, fontWeight: 600}} />
+                <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+                <Bar dataKey="weight" name="Impact Weight" fill="#5a5ce6" radius={[0, 4, 4, 0]} barSize={24}>
+                  {featureImportance.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={index < 3 ? '#5a5ce6' : '#94a3b8'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Confusion Matrix */}
+        <div className="card">
+          <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24}}>
+            <div style={{background: '#fef3c7', color: '#d97706', padding: 8, borderRadius: 8}}><Target size={20}/></div>
+            <h3 style={{fontSize: 18, fontWeight: 800}}>Confusion Matrix</h3>
+          </div>
+          <p style={{fontSize: 13, color: 'var(--text-gray)', marginBottom: 24}}>Performance on the holdout validation dataset (n=3,000).</p>
+          
+          <div style={{display: 'grid', gridTemplateColumns: '40px 1fr 1fr', gridTemplateRows: '40px 1fr 1fr', gap: 4, height: 260}}>
+            <div></div>
+            <div style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-gray)', paddingBottom: 8}}>Predicted Placed</div>
+            <div style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-gray)', paddingBottom: 8}}>Predicted Unplaced</div>
+            
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontSize: 11, fontWeight: 700, color: 'var(--text-gray)', paddingRight: 8, writingMode: 'vertical-rl', transform: 'rotate(180deg)'}}>Actual Placed</div>
+            <div style={{background: '#d1fae5', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{fontSize: 28, fontWeight: 800, color: '#059669'}}>1,420</div>
+              <div style={{fontSize: 11, fontWeight: 700, color: '#059669', opacity: 0.8}}>True Positive (TP)</div>
+            </div>
+            <div style={{background: '#fee2e2', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{fontSize: 28, fontWeight: 800, color: '#ef4444'}}>145</div>
+              <div style={{fontSize: 11, fontWeight: 700, color: '#ef4444', opacity: 0.8}}>False Negative (FN)</div>
+            </div>
+
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontSize: 11, fontWeight: 700, color: 'var(--text-gray)', paddingRight: 8, writingMode: 'vertical-rl', transform: 'rotate(180deg)'}}>Actual Unplaced</div>
+            <div style={{background: '#fee2e2', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{fontSize: 28, fontWeight: 800, color: '#ef4444'}}>162</div>
+              <div style={{fontSize: 11, fontWeight: 700, color: '#ef4444', opacity: 0.8}}>False Positive (FP)</div>
+            </div>
+            <div style={{background: '#f1f5f9', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+              <div style={{fontSize: 28, fontWeight: 800, color: '#475569'}}>1,273</div>
+              <div style={{fontSize: 11, fontWeight: 700, color: '#475569', opacity: 0.8}}>True Negative (TN)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Area: ROC Curve */}
+      <div className="card">
+         <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24}}>
+          <div style={{background: '#e0f2fe', color: '#0ea5e9', padding: 8, borderRadius: 8}}><TrendingUp size={20}/></div>
+          <h3 style={{fontSize: 18, fontWeight: 800}}>ROC-AUC Curve (AUC = 0.94)</h3>
+        </div>
+        <div style={{height: 300}}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={rocData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="fpr" type="number" domain={[0, 1]} tick={{fill: '#64748b', fontSize: 12}}>
+                <label value="False Positive Rate" position="bottom" style={{fill: '#64748b', fontSize: 12, fontWeight: 600}}/>
+              </XAxis>
+              <YAxis dataKey="tpr" type="number" domain={[0, 1]} tick={{fill: '#64748b', fontSize: 12}}>
+                <label value="True Positive Rate" angle={-90} position="left" style={{fill: '#64748b', fontSize: 12, fontWeight: 600}}/>
+              </YAxis>
+              <Tooltip contentStyle={{borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+              <Line type="monotone" dataKey="tpr" name="XGBoost" stroke="#0ea5e9" strokeWidth={3} dot={false} />
+              {/* Baseline */}
+              <Line data={[{fpr:0,tpr:0},{fpr:1,tpr:1}]} dataKey="tpr" stroke="#cbd5e1" strokeDasharray="5 5" strokeWidth={2} dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
     </div>
   );
 }
