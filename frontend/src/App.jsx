@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Home, Users, Target, Activity, Lightbulb, Settings, FileText, Database,
   Bell, Search, BookOpen, PenTool, Brain, Code, User, ArrowRight,
-  TrendingUp, Briefcase, Award, Zap, BriefcaseBusiness, CloudRain, Shield, Quote, Heart, UploadCloud, Monitor, CheckCircle, XCircle, Download, Filter
+  TrendingUp, Briefcase, Award, Zap, BriefcaseBusiness, CloudRain, Shield, Quote, Heart, UploadCloud, Monitor, CheckCircle, XCircle, Download, Filter, Link, RefreshCw
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
@@ -465,6 +465,8 @@ export default function App() {
           <ModelPerformanceTab />
         ) : activeTab === 'Reports' ? (
           <ReportsTab />
+        ) : activeTab === 'Data Management' ? (
+          <DataManagementTab />
         ) : activeTab === 'Prediction' ? (
           <PredictionTab 
              formData={formData} 
@@ -1616,6 +1618,116 @@ function ReportsTab() {
                       <button style={{background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 600, fontSize: 13}}>
                         <Download size={16}/> Download
                       </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+function DataManagementTab() {
+  const dataConnections = [
+    { name: 'University ERP System', status: 'Connected', lastSync: '2 hours ago', records: '14,502', icon: <Database size={24}/>, color: '#3b82f6' },
+    { name: 'Training Placement Cell Portal', status: 'Connected', lastSync: '10 mins ago', records: '4,105', icon: <BriefcaseBusiness size={24}/>, color: '#10b981' },
+    { name: 'Alumni Database (MySQL)', status: 'Disconnected', lastSync: '3 days ago', records: '8,204', icon: <Users size={24}/>, color: '#ef4444' },
+  ];
+
+  const syncLogs = [
+    { id: 'SYNC-921', source: 'ERP System', rowsAdded: 142, errors: 0, date: 'Oct 12, 10:45 AM', status: 'Success' },
+    { id: 'SYNC-920', source: 'TPC Portal', rowsAdded: 45, errors: 2, date: 'Oct 12, 09:15 AM', status: 'Warning' },
+    { id: 'SYNC-919', source: 'Manual CSV', rowsAdded: 1500, errors: 0, date: 'Oct 11, 04:30 PM', status: 'Success' },
+    { id: 'SYNC-918', source: 'Alumni DB', rowsAdded: 0, errors: 12, date: 'Oct 10, 11:00 AM', status: 'Failed' },
+  ];
+
+  return (
+    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32}}>
+        <div>
+          <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>Data Management Center</h2>
+          <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Manage integrations, run data cleaning pipelines, and monitor real-time sync logs.</p>
+        </div>
+        <div style={{display: 'flex', gap: 12}}>
+          <button className="btn-secondary" style={{padding: '0 20px'}}><UploadCloud size={16} style={{marginRight: 8}}/> Import CSV</button>
+          <button className="btn-primary" style={{padding: '0 20px', background: '#3b82f6', borderColor: '#3b82f6'}}><RefreshCw size={16} style={{marginRight: 8}}/> Sync All Sources</button>
+        </div>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 24, marginBottom: 24}}>
+        
+        {/* Left: Active Data Connections */}
+        <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+          <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 4}}>Active Connections</h3>
+          <p style={{fontSize: 12, color: 'var(--text-gray)', marginBottom: 8}}>Live data sources feeding the ML Model.</p>
+          
+          {dataConnections.map((conn, idx) => (
+            <div key={idx} className="card" style={{padding: 20, borderLeft: `4px solid ${conn.color}`}}>
+              <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
+                  <div style={{width: 48, height: 48, borderRadius: 12, background: `${conn.color}15`, color: conn.color, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    {conn.icon}
+                  </div>
+                  <div>
+                    <div style={{fontSize: 15, fontWeight: 800, color: 'var(--text-dark)'}}>{conn.name}</div>
+                    <div style={{fontSize: 12, color: 'var(--text-gray)', marginTop: 4}}>{conn.records} records synced</div>
+                  </div>
+                </div>
+                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8}}>
+                  <span style={{display: 'flex', alignItems: 'center', gap: 4, background: conn.status === 'Connected' ? '#d1fae5' : '#fee2e2', color: conn.status === 'Connected' ? '#10b981' : '#ef4444', padding: '4px 10px', borderRadius: 12, fontSize: 11, fontWeight: 700}}>
+                    {conn.status === 'Connected' ? <CheckCircle size={12}/> : <XCircle size={12}/>} {conn.status}
+                  </span>
+                  <span style={{fontSize: 11, color: 'var(--text-gray)'}}>Sync: {conn.lastSync}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          <button className="btn-secondary" style={{width: '100%', marginTop: 8, padding: '14px', borderStyle: 'dashed'}}><Link size={16} style={{marginRight: 8}}/> Add New Data Source</button>
+        </div>
+
+        {/* Right Side: Data Sync Logs */}
+        <div className="card">
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24}}>
+            <h3 style={{fontSize: 18, fontWeight: 800}}>Data Pipeline Logs</h3>
+            <div style={{display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#10b981', fontWeight: 600, background: '#d1fae5', padding: '6px 12px', borderRadius: 20}}>
+              <span style={{width: 8, height: 8, borderRadius: '50%', background: '#10b981', animation: 'pulse 2s infinite'}}></span> Pipeline Healthy
+            </div>
+          </div>
+
+          <div style={{overflowX: 'auto'}}>
+            <table style={{width: '100%', borderCollapse: 'collapse', textAlign: 'left'}}>
+              <thead>
+                <tr style={{borderBottom: '2px solid #f1f5f9'}}>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)'}}>Sync ID</th>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)'}}>Source</th>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)'}}>Date & Time</th>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)', textAlign: 'center'}}>Rows Added</th>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)', textAlign: 'center'}}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {syncLogs.map((log, idx) => (
+                  <tr key={idx} style={{borderBottom: '1px solid #f8fafc'}}>
+                    <td style={{padding: '16px', fontSize: 13, fontWeight: 700, color: 'var(--text-dark)'}}>{log.id}</td>
+                    <td style={{padding: '16px', fontSize: 13, color: 'var(--text-gray)', fontWeight: 500}}>{log.source}</td>
+                    <td style={{padding: '16px', fontSize: 13, color: 'var(--text-gray)'}}>{log.date}</td>
+                    <td style={{padding: '16px', textAlign: 'center'}}>
+                      <div style={{fontSize: 14, fontWeight: 700, color: 'var(--text-dark)'}}>{log.rowsAdded}</div>
+                      {log.errors > 0 && <div style={{fontSize: 11, color: '#ef4444', fontWeight: 600}}>{log.errors} errors</div>}
+                    </td>
+                    <td style={{padding: '16px', textAlign: 'center'}}>
+                      <span style={{
+                        background: log.status === 'Success' ? '#d1fae5' : log.status === 'Warning' ? '#fef3c7' : '#fee2e2',
+                        color: log.status === 'Success' ? '#10b981' : log.status === 'Warning' ? '#d97706' : '#ef4444',
+                        padding: '4px 10px', borderRadius: 12, fontSize: 11, fontWeight: 700
+                      }}>
+                        {log.status}
+                      </span>
                     </td>
                   </tr>
                 ))}
