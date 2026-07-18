@@ -6,7 +6,8 @@ import {
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  PieChart, Pie, Cell, BarChart, Bar, AreaChart, Area, Tooltip, Legend
+  PieChart, Pie, Cell, BarChart, Bar, AreaChart, Area, Tooltip, Legend,
+  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
 import './App.css';
 
@@ -456,6 +457,8 @@ export default function App() {
           <StudentsTab />
         ) : activeTab === 'Analytics' ? (
           <AnalyticsTab />
+        ) : activeTab === 'Batch Insights' ? (
+          <BatchInsightsTab />
         ) : activeTab === 'Prediction' ? (
           <PredictionTab 
              formData={formData} 
@@ -1050,6 +1053,157 @@ function AnalyticsTab() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function BatchInsightsTab() {
+  const skillGapData = [
+    { subject: 'DSA', actual: 6.5, expected: 8.5 },
+    { subject: 'System Design', actual: 4.2, expected: 7.0 },
+    { subject: 'Web Dev', actual: 7.8, expected: 7.5 },
+    { subject: 'Machine Learning', actual: 3.5, expected: 6.0 },
+    { subject: 'Soft Skills', actual: 8.1, expected: 8.0 },
+    { subject: 'Aptitude', actual: 6.8, expected: 8.0 },
+  ];
+
+  const atRiskStudents = [
+    { id: 'STU089', name: 'Kabir Verma', branch: 'CIVIL', cgpa: 6.2, dsa: 3, prob: 28 },
+    { id: 'STU142', name: 'Ananya Iyer', branch: 'ME', cgpa: 6.5, dsa: 4, prob: 34 },
+    { id: 'STU205', name: 'Rahul Nair', branch: 'ECE', cgpa: 5.9, dsa: 5, prob: 41 },
+  ];
+
+  const topPerformers = [
+    { id: 'STU012', name: 'Aisha Khan', branch: 'CSE', cgpa: 9.4, dsa: 9, prob: 98 },
+    { id: 'STU034', name: 'Dhruv Patel', branch: 'IT', cgpa: 9.1, dsa: 8.5, prob: 95 },
+    { id: 'STU077', name: 'Neha Sharma', branch: 'CSE', cgpa: 8.9, dsa: 9, prob: 93 },
+  ];
+
+  const branchData = [
+    { name: 'CSE', avgCgpa: 8.1, avgDsa: 7.5, placementProb: 82 },
+    { name: 'IT', avgCgpa: 7.8, avgDsa: 7.0, placementProb: 76 },
+    { name: 'ECE', avgCgpa: 7.5, avgDsa: 6.2, placementProb: 65 },
+    { name: 'ME', avgCgpa: 7.2, avgDsa: 4.5, placementProb: 45 },
+    { name: 'CIVIL', avgCgpa: 7.0, avgDsa: 4.0, placementProb: 38 },
+  ];
+
+  return (
+    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32}}>
+        <div>
+          <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>Batch Insights</h2>
+          <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Identify skill gaps, monitor at-risk students, and track batch-level performance metrics.</p>
+        </div>
+        <div style={{display: 'flex', gap: 12}}>
+          <select className="modal-input" style={{width: 200}}>
+            <option>Batch 2024 (Current)</option>
+            <option>Batch 2023</option>
+            <option>Batch 2022</option>
+          </select>
+        </div>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24}}>
+        
+        {/* Left: Skill Gap Radar */}
+        <div className="card">
+          <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 8}}>Skill Gap Analysis</h3>
+          <p style={{fontSize: 13, color: 'var(--text-gray)', marginBottom: 24}}>Compare the current batch's average skills against industry expectations.</p>
+          <div style={{height: 350}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={skillGapData}>
+                <PolarGrid stroke="#e2e8f0" />
+                <PolarAngleAxis dataKey="subject" tick={{fill: '#64748b', fontSize: 12}} />
+                <PolarRadiusAxis angle={30} domain={[0, 10]} tick={{fill: '#94a3b8', fontSize: 10}} />
+                <Radar name="Industry Expected" dataKey="expected" stroke="#10b981" fill="#10b981" fillOpacity={0.2} />
+                <Radar name="Batch Actual" dataKey="actual" stroke="#5a5ce6" fill="#5a5ce6" fillOpacity={0.5} />
+                <Tooltip contentStyle={{borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+                <Legend iconType="circle" />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Right: Branch Performance Bar Chart */}
+        <div className="card">
+          <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 8}}>Branch-Wise Performance</h3>
+          <p style={{fontSize: 13, color: 'var(--text-gray)', marginBottom: 24}}>Average CGPA vs DSA Scores across engineering branches.</p>
+          <div style={{height: 350}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={branchData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} domain={[0, 10]} />
+                <Tooltip cursor={{fill: '#f8fafc'}} contentStyle={{borderRadius: 8, border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'}} />
+                <Legend iconType="circle" />
+                <Bar dataKey="avgCgpa" name="Avg CGPA (out of 10)" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="avgDsa" name="Avg DSA (out of 10)" fill="#ec4899" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Row: Actionable Student Lists */}
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24}}>
+        
+        {/* At-Risk Students */}
+        <div className="card" style={{borderTop: '4px solid #ef4444'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8}}>
+            <div style={{background: '#fee2e2', color: '#ef4444', padding: 8, borderRadius: 8}}><Shield size={20}/></div>
+            <h3 style={{fontSize: 18, fontWeight: 800}}>At-Risk Intervention Needed</h3>
+          </div>
+          <p style={{fontSize: 13, color: 'var(--text-gray)', marginBottom: 24}}>Students with placement probability &lt; 45%. Require immediate technical training.</p>
+          
+          <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+            {atRiskStudents.map(stu => (
+              <div key={stu.id} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#f8fafc', borderRadius: 12, border: '1px solid #f1f5f9'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+                  <img src={`https://ui-avatars.com/api/?name=${stu.name.replace(' ','+')}&background=ef4444&color=fff`} style={{width: 40, height: 40, borderRadius: '50%'}} alt="Avatar"/>
+                  <div>
+                    <div style={{fontWeight: 700, fontSize: 14, color: 'var(--text-dark)'}}>{stu.name}</div>
+                    <div style={{fontSize: 12, color: 'var(--text-gray)'}}>{stu.branch} | CGPA: {stu.cgpa} | DSA: {stu.dsa}/10</div>
+                  </div>
+                </div>
+                <div style={{textAlign: 'right'}}>
+                  <div style={{fontSize: 18, fontWeight: 800, color: '#ef4444'}}>{stu.prob}%</div>
+                  <div style={{fontSize: 11, color: 'var(--text-gray)', fontWeight: 600}}>Probability</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button className="btn-secondary" style={{width: '100%', marginTop: 24}}>View All At-Risk Students</button>
+        </div>
+
+        {/* Top Performers */}
+        <div className="card" style={{borderTop: '4px solid #10b981'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8}}>
+            <div style={{background: '#d1fae5', color: '#10b981', padding: 8, borderRadius: 8}}><Award size={20}/></div>
+            <h3 style={{fontSize: 18, fontWeight: 800}}>Top Batch Performers</h3>
+          </div>
+          <p style={{fontSize: 13, color: 'var(--text-gray)', marginBottom: 24}}>Top 1% students ready for Tier-1 Product Based Companies (Dream Offers).</p>
+          
+          <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+            {topPerformers.map(stu => (
+              <div key={stu.id} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: '#f8fafc', borderRadius: 12, border: '1px solid #f1f5f9'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+                  <img src={`https://ui-avatars.com/api/?name=${stu.name.replace(' ','+')}&background=10b981&color=fff`} style={{width: 40, height: 40, borderRadius: '50%'}} alt="Avatar"/>
+                  <div>
+                    <div style={{fontWeight: 700, fontSize: 14, color: 'var(--text-dark)'}}>{stu.name}</div>
+                    <div style={{fontSize: 12, color: 'var(--text-gray)'}}>{stu.branch} | CGPA: {stu.cgpa} | DSA: {stu.dsa}/10</div>
+                  </div>
+                </div>
+                <div style={{textAlign: 'right'}}>
+                  <div style={{fontSize: 18, fontWeight: 800, color: '#10b981'}}>{stu.prob}%</div>
+                  <div style={{fontSize: 11, color: 'var(--text-gray)', fontWeight: 600}}>Probability</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button className="btn-secondary" style={{width: '100%', marginTop: 24}}>View All Top Performers</button>
+        </div>
+
       </div>
     </div>
   );
