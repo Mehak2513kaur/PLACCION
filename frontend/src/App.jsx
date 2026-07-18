@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Home, Users, Target, Activity, Lightbulb, Settings, FileText, Database,
   Bell, Search, BookOpen, PenTool, Brain, Code, User, ArrowRight,
-  TrendingUp, Briefcase, Award, Zap, BriefcaseBusiness, CloudRain, Shield, Quote, Heart, UploadCloud, Monitor, CheckCircle, XCircle
+  TrendingUp, Briefcase, Award, Zap, BriefcaseBusiness, CloudRain, Shield, Quote, Heart, UploadCloud, Monitor, CheckCircle, XCircle, Download, Filter
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
@@ -463,6 +463,8 @@ export default function App() {
           <RecommendationsTab />
         ) : activeTab === 'Model Performance' ? (
           <ModelPerformanceTab />
+        ) : activeTab === 'Reports' ? (
+          <ReportsTab />
         ) : activeTab === 'Prediction' ? (
           <PredictionTab 
              formData={formData} 
@@ -1493,6 +1495,136 @@ function ModelPerformanceTab() {
         </div>
       </div>
 
+    </div>
+  );
+}
+
+function ReportsTab() {
+  const recentReports = [
+    { id: 'REP-001', name: 'Batch 2024 Placement Summary Final', type: 'PDF', date: 'Oct 12, 2024', size: '2.4 MB', status: 'Completed' },
+    { id: 'REP-002', name: 'Skill Gap Analysis - CSE Dept', type: 'CSV', date: 'Oct 10, 2024', size: '156 KB', status: 'Completed' },
+    { id: 'REP-003', name: 'Recruiter Feedback Aggregation', type: 'PDF', date: 'Oct 05, 2024', size: '1.1 MB', status: 'Completed' },
+    { id: 'REP-004', name: 'Diversity & Inclusion Metrics', type: 'XLSX', date: 'Sep 28, 2024', size: '420 KB', status: 'Completed' },
+    { id: 'REP-005', name: 'At-Risk Student Intervention Logs', type: 'PDF', date: 'Sep 15, 2024', size: '890 KB', status: 'Completed' },
+  ];
+
+  return (
+    <div style={{animation: 'fadeIn 0.5s ease-out'}}>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32}}>
+        <div>
+          <h2 style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)'}}>Reports & Exports</h2>
+          <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Generate, schedule, and download comprehensive placement reports for stakeholders.</p>
+        </div>
+      </div>
+
+      <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 24, marginBottom: 24}}>
+        
+        {/* Left Side: Report Generator */}
+        <div className="card" style={{height: 'fit-content'}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24}}>
+            <div style={{background: '#eef2ff', color: '#5a5ce6', padding: 8, borderRadius: 8}}><FileText size={20}/></div>
+            <h3 style={{fontSize: 18, fontWeight: 800}}>Generate New Report</h3>
+          </div>
+          
+          <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
+            <div>
+              <label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 6, display: 'block'}}>Report Type</label>
+              <select className="modal-input" style={{width: '100%'}}>
+                <option>Comprehensive Placement Summary</option>
+                <option>Branch-Wise Performance</option>
+                <option>Student Skill Gap Analysis</option>
+                <option>Recruiter Pipeline & Conversion</option>
+              </select>
+            </div>
+            
+            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16}}>
+              <div>
+                <label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 6, display: 'block'}}>Target Batch</label>
+                <select className="modal-input" style={{width: '100%'}}>
+                  <option>Batch 2024</option>
+                  <option>Batch 2023</option>
+                  <option>All Active Batches</option>
+                </select>
+              </div>
+              <div>
+                <label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 6, display: 'block'}}>Target Branch</label>
+                <select className="modal-input" style={{width: '100%'}}>
+                  <option>All Branches</option>
+                  <option>CSE</option>
+                  <option>IT</option>
+                  <option>ECE</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 6, display: 'block'}}>Export Format</label>
+              <div style={{display: 'flex', gap: 12}}>
+                <label style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px', border: '1px solid var(--primary)', background: '#eef2ff', borderRadius: 8, color: 'var(--primary)', fontWeight: 600, cursor: 'pointer'}}>
+                  <input type="radio" name="format" defaultChecked style={{accentColor: 'var(--primary)'}}/> PDF
+                </label>
+                <label style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '10px', border: '1px solid #e2e8f0', borderRadius: 8, color: 'var(--text-gray)', fontWeight: 600, cursor: 'pointer'}}>
+                  <input type="radio" name="format" style={{accentColor: 'var(--primary)'}}/> CSV / Excel
+                </label>
+              </div>
+            </div>
+
+            <button className="btn-primary" style={{width: '100%', marginTop: 8, padding: '14px', fontSize: 14}}><Download size={18} style={{marginRight: 8}}/> Generate & Download</button>
+          </div>
+        </div>
+
+        {/* Right Side: Recent Reports Table */}
+        <div className="card">
+          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24}}>
+            <h3 style={{fontSize: 18, fontWeight: 800}}>Recent Generated Reports</h3>
+            <button className="btn-secondary" style={{padding: '6px 12px', fontSize: 12}}><Filter size={14} style={{marginRight: 6}}/> Filter</button>
+          </div>
+
+          <div style={{overflowX: 'auto'}}>
+            <table style={{width: '100%', borderCollapse: 'collapse', textAlign: 'left'}}>
+              <thead>
+                <tr style={{borderBottom: '2px solid #f1f5f9'}}>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)'}}>Report Name</th>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)'}}>Format</th>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)'}}>Date Generated</th>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)'}}>Status</th>
+                  <th style={{padding: '12px 16px', fontSize: 12, fontWeight: 700, color: 'var(--text-gray)', textAlign: 'right'}}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentReports.map((report, idx) => (
+                  <tr key={idx} style={{borderBottom: '1px solid #f8fafc', transition: 'background 0.2s'}} onMouseOver={e => e.currentTarget.style.background = '#f8fafc'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                    <td style={{padding: '16px', display: 'flex', alignItems: 'center', gap: 12}}>
+                      <div style={{background: report.type === 'PDF' ? '#fee2e2' : '#d1fae5', color: report.type === 'PDF' ? '#ef4444' : '#10b981', padding: 8, borderRadius: 8}}>
+                        <FileText size={16}/>
+                      </div>
+                      <div>
+                        <div style={{fontSize: 13, fontWeight: 700, color: 'var(--text-dark)'}}>{report.name}</div>
+                        <div style={{fontSize: 11, color: 'var(--text-gray)', marginTop: 2}}>{report.size}</div>
+                      </div>
+                    </td>
+                    <td style={{padding: '16px'}}>
+                      <span style={{background: '#f1f5f9', padding: '4px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700, color: '#475569'}}>{report.type}</span>
+                    </td>
+                    <td style={{padding: '16px', fontSize: 13, color: 'var(--text-gray)', fontWeight: 500}}>{report.date}</td>
+                    <td style={{padding: '16px'}}>
+                      <span style={{display: 'inline-flex', alignItems: 'center', gap: 6, color: '#10b981', fontSize: 12, fontWeight: 600}}>
+                        <CheckCircle size={14}/> {report.status}
+                      </span>
+                    </td>
+                    <td style={{padding: '16px', textAlign: 'right'}}>
+                      <button style={{background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 600, fontSize: 13}}>
+                        <Download size={16}/> Download
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }
