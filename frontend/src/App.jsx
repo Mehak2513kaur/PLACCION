@@ -52,7 +52,7 @@ export default function App() {
     uploadData.append("file", file);
     
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const apiUrl = 'https://placcion.onrender.com';
       const response = await fetch(`${apiUrl}/upload_resume`, {
         method: 'POST',
         body: uploadData
@@ -87,7 +87,7 @@ export default function App() {
   const handlePredict = async (dataToPredict = formData) => {
     setIsLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      const apiUrl = 'https://placcion.onrender.com';
       const response = await fetch(`${apiUrl}/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
