@@ -17,13 +17,48 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load Model
+# Load Model or Train Fallback
 model_path = os.path.join(os.path.dirname(__file__), "..", "models", "best_model.pkl")
 try:
     model_pipeline = joblib.load(model_path)
+    print("Successfully loaded pre-trained model.")
 except Exception as e:
-    print(f"Error loading model: {e}")
-    model_pipeline = None
+    print(f"Pre-trained model not found. Training a quick fallback model on the fly...")
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.pipeline import Pipeline
+    from sklearn.compose import ColumnTransformer
+    from sklearn.preprocessing import StandardScaler, OneHotEncoder
+    
+    data_path = os.path.join(os.path.dirname(__file__), "..", "data", "student_placement_synthetic.csv")
+    if os.path.exists(data_path):
+        df = pd.read_csv(data_path)
+        if 'salary_package_lpa' in df.columns:
+            df.drop('salary_package_lpa', axis=1, inplace=True)
+            
+        X = df.drop('placement_status', axis=1)
+        y = df['placement_status']
+        
+        categorical_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_cols = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
+        
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', StandardScaler(), numerical_cols),
+                ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
+            ])
+            
+        rf = RandomForestClassifier(n_estimators=50, max_depth=10, random_state=42)
+        
+        model_pipeline = Pipeline(steps=[
+            ('preprocessor', preprocessor),
+            ('classifier', rf)
+        ])
+        
+        model_pipeline.fit(X, y)
+        print("Fallback model trained successfully!")
+    else:
+        print("Dataset not found. Cannot train fallback model.")
+        model_pipeline = None
 
 class StudentData(BaseModel):
     branch: str
