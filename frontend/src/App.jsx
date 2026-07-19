@@ -378,7 +378,7 @@ export default function App() {
             )}
 
             {/* Dashboard Grid - Bottom Section */}
-            <div className="responsive-grid-2-asym" style={{, marginTop: 24}}>
+            <div className="responsive-grid-2-asym" style={{marginTop: 24}}>
               {/* Left: Insights */}
               <div className="card" style={{display: 'flex', flexDirection: 'column'}}>
                 <div className="card-title" style={{marginBottom: 24}}>Placement Insights</div>
@@ -983,7 +983,7 @@ function AnalyticsTab() {
         </div>
       </div>
 
-      <div className="responsive-grid-4" style={{, marginBottom: 24}}>
+      <div className="responsive-grid-4" style={{marginBottom: 24}}>
         <div className="card" style={{padding: 24, borderTop: '4px solid #5a5ce6'}}>
           <div style={{fontSize: 13, color: 'var(--text-gray)', fontWeight: 600}}>Highest Package</div>
           <div style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)', marginTop: 8}}>₹ 42.5<span style={{fontSize: 16, color: 'var(--text-muted)'}}> LPA</span></div>
@@ -1006,7 +1006,7 @@ function AnalyticsTab() {
         </div>
       </div>
 
-      <div className="responsive-grid-2-asym" style={{, marginBottom: 24}}>
+      <div className="responsive-grid-2-asym" style={{marginBottom: 24}}>
         <div className="card">
           <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 24}}>Placement & Salary Trends (2019-2024)</h3>
           <div style={{height: 350}}>
@@ -1126,7 +1126,7 @@ function BatchInsightsTab() {
         </div>
       </div>
 
-      <div className="responsive-grid-2" style={{, marginBottom: 24}}>
+      <div className="responsive-grid-2" style={{marginBottom: 24}}>
         
         {/* Left: Skill Gap Radar */}
         <div className="card">
@@ -1402,7 +1402,7 @@ function ModelPerformanceTab() {
       </div>
 
       {/* Top Metrics */}
-      <div className="responsive-grid-4" style={{, marginBottom: 24}}>
+      <div className="responsive-grid-4" style={{marginBottom: 24}}>
         <div className="card" style={{padding: 20, textAlign: 'center'}}>
           <div style={{fontSize: 12, color: 'var(--text-gray)', fontWeight: 700, textTransform: 'uppercase'}}>Accuracy</div>
           <div style={{fontSize: 32, fontWeight: 800, color: '#10b981', marginTop: 12}}>91.3%</div>
@@ -1425,7 +1425,7 @@ function ModelPerformanceTab() {
         </div>
       </div>
 
-      <div className="responsive-grid-2-asym" style={{, marginBottom: 24}}>
+      <div className="responsive-grid-2-asym" style={{marginBottom: 24}}>
         
         {/* Feature Importance Horizontal Bar Chart */}
         <div className="card">
@@ -1533,7 +1533,7 @@ function ReportsTab() {
         </div>
       </div>
 
-      <div className="responsive-grid-2-asym-rev" style={{, marginBottom: 24}}>
+      <div className="responsive-grid-2-asym-rev" style={{marginBottom: 24}}>
         
         {/* Left Side: Report Generator */}
         <div className="card" style={{height: 'fit-content'}}>
@@ -1672,7 +1672,7 @@ function DataManagementTab() {
         </div>
       </div>
 
-      <div className="responsive-grid-2-asym-rev" style={{, marginBottom: 24}}>
+      <div className="responsive-grid-2-asym-rev" style={{marginBottom: 24}}>
         
         {/* Left: Active Data Connections */}
         <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
@@ -1771,7 +1771,7 @@ function SettingsTab() {
                 <div style={{fontSize: 11, color: 'var(--text-gray)'}}>JPG or PNG, Max 2MB</div>
               </div>
             </div>
-            <div className="responsive-grid-2" style={{, marginBottom: 20}}>
+            <div className="responsive-grid-2" style={{marginBottom: 20}}>
               <div>
                 <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Full Name</label>
                 <input type="text" className="modal-input" defaultValue="Admin User" style={{width: '100%'}}/>
