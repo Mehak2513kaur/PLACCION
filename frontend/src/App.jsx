@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Home, Users, Target, Activity, Lightbulb, Settings, FileText, Database,
   Bell, Search, BookOpen, PenTool, Brain, Code, User, ArrowRight,
-  TrendingUp, Briefcase, Award, Zap, BriefcaseBusiness, CloudRain, Shield, Quote, Heart, UploadCloud, Monitor, CheckCircle, XCircle, Download, Filter, Link, RefreshCw, Lock, Sliders
+  TrendingUp, Briefcase, Award, Zap, BriefcaseBusiness, CloudRain, Shield, Quote, Heart, UploadCloud, Monitor, CheckCircle, XCircle, Download, Filter, Link, RefreshCw, Lock, Sliders, Menu, X
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
@@ -18,6 +18,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Dashboard');
   const [toastMsg, setToastMsg] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const [wizardStep, setWizardStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -125,14 +126,20 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* Mobile Overlay */}
+      <div className={`overlay ${isSidebarOpen ? 'open' : ''}`} onClick={() => setIsSidebarOpen(false)}></div>
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-logo">
           <div className="logo-icon">P</div>
-          <div>
+          <div style={{flex: 1}}>
             <h3 style={{fontWeight: 800, fontSize: '15px'}}>PLACCION</h3>
             <p style={{fontSize: '11px', color: 'var(--text-gray)'}}>AI Placement Predictor</p>
           </div>
+          <button className="mobile-menu-btn" style={{border: 'none', background: 'transparent'}} onClick={() => setIsSidebarOpen(false)}>
+            <X size={20} />
+          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -161,13 +168,18 @@ export default function App() {
       <main className="main-content">
         {/* Header */}
         <header className="header">
-          <div>
-            <h1 style={{fontSize: '24px', fontWeight: 800, marginBottom: '6px', color: 'var(--text-dark)'}}>
-              {activeTab === 'Dashboard' ? 'Welcome back, Placement Team! 👋' : `${activeTab} Dashboard`}
-            </h1>
-            <p style={{fontSize: '14px', color: 'var(--text-gray)'}}>
-              {activeTab === 'Dashboard' ? 'AI-driven insights to build successful futures' : `Manage and view ${activeTab.toLowerCase()} data`}
-            </p>
+          <div style={{display: 'flex', alignItems: 'center', gap: 16}}>
+            <button className="mobile-menu-btn" onClick={() => setIsSidebarOpen(true)}>
+              <Menu size={20} />
+            </button>
+            <div>
+              <h1 style={{fontSize: '24px', fontWeight: 800, marginBottom: '6px', color: 'var(--text-dark)'}}>
+                {activeTab === 'Dashboard' ? 'Welcome back! 👋' : `${activeTab}`}
+              </h1>
+              <p style={{fontSize: '14px', color: 'var(--text-gray)', display: window.innerWidth > 768 ? 'block' : 'none'}}>
+                {activeTab === 'Dashboard' ? 'AI-driven insights to build successful futures' : `Manage and view ${activeTab.toLowerCase()} data`}
+              </p>
+            </div>
           </div>
           <div style={{display: 'flex', gap: '24px', alignItems: 'center'}}>
             <div className="search-box">
@@ -366,7 +378,7 @@ export default function App() {
             )}
 
             {/* Dashboard Grid - Bottom Section */}
-            <div style={{display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 24, marginTop: 24}}>
+            <div className="responsive-grid-2-asym" style={{, marginTop: 24}}>
               {/* Left: Insights */}
               <div className="card" style={{display: 'flex', flexDirection: 'column'}}>
                 <div className="card-title" style={{marginBottom: 24}}>Placement Insights</div>
@@ -971,7 +983,7 @@ function AnalyticsTab() {
         </div>
       </div>
 
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginBottom: 24}}>
+      <div className="responsive-grid-4" style={{, marginBottom: 24}}>
         <div className="card" style={{padding: 24, borderTop: '4px solid #5a5ce6'}}>
           <div style={{fontSize: 13, color: 'var(--text-gray)', fontWeight: 600}}>Highest Package</div>
           <div style={{fontSize: 28, fontWeight: 800, color: 'var(--text-dark)', marginTop: 8}}>₹ 42.5<span style={{fontSize: 16, color: 'var(--text-muted)'}}> LPA</span></div>
@@ -994,7 +1006,7 @@ function AnalyticsTab() {
         </div>
       </div>
 
-      <div style={{display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24, marginBottom: 24}}>
+      <div className="responsive-grid-2-asym" style={{, marginBottom: 24}}>
         <div className="card">
           <h3 style={{fontSize: 18, fontWeight: 800, marginBottom: 24}}>Placement & Salary Trends (2019-2024)</h3>
           <div style={{height: 350}}>
@@ -1114,7 +1126,7 @@ function BatchInsightsTab() {
         </div>
       </div>
 
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24}}>
+      <div className="responsive-grid-2" style={{, marginBottom: 24}}>
         
         {/* Left: Skill Gap Radar */}
         <div className="card">
@@ -1156,7 +1168,7 @@ function BatchInsightsTab() {
       </div>
 
       {/* Bottom Row: Actionable Student Lists */}
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24}}>
+      <div className="responsive-grid-2">
         
         {/* At-Risk Students */}
         <div className="card" style={{borderTop: '4px solid #ef4444'}}>
@@ -1269,7 +1281,7 @@ function RecommendationsTab() {
         <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Actionable steps generated by the AI engine to maximize the placement rate of the current batch.</p>
       </div>
 
-      <div style={{display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 24}}>
+      <div className="responsive-grid-2-asym">
         
         {/* Left: Actionable Recommendations */}
         <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
@@ -1314,7 +1326,7 @@ function RecommendationsTab() {
             <p style={{fontSize: 13, color: '#94a3b8', lineHeight: 1.6, marginBottom: 20}}>
               By executing the top two high-impact recommendations, the AI predicts a potential <strong>12% increase</strong> in overall placement probability for Batch 2024 within the next 45 days.
             </p>
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16}}>
+            <div className="responsive-grid-2">
               <div style={{background: 'rgba(255,255,255,0.1)', padding: 12, borderRadius: 8}}>
                 <div style={{fontSize: 24, fontWeight: 800, color: '#10b981'}}>+12%</div>
                 <div style={{fontSize: 11, color: '#94a3b8', marginTop: 4}}>Projected Growth</div>
@@ -1390,7 +1402,7 @@ function ModelPerformanceTab() {
       </div>
 
       {/* Top Metrics */}
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 20, marginBottom: 24}}>
+      <div className="responsive-grid-4" style={{, marginBottom: 24}}>
         <div className="card" style={{padding: 20, textAlign: 'center'}}>
           <div style={{fontSize: 12, color: 'var(--text-gray)', fontWeight: 700, textTransform: 'uppercase'}}>Accuracy</div>
           <div style={{fontSize: 32, fontWeight: 800, color: '#10b981', marginTop: 12}}>91.3%</div>
@@ -1413,7 +1425,7 @@ function ModelPerformanceTab() {
         </div>
       </div>
 
-      <div style={{display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 24, marginBottom: 24}}>
+      <div className="responsive-grid-2-asym" style={{, marginBottom: 24}}>
         
         {/* Feature Importance Horizontal Bar Chart */}
         <div className="card">
@@ -1521,7 +1533,7 @@ function ReportsTab() {
         </div>
       </div>
 
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 24, marginBottom: 24}}>
+      <div className="responsive-grid-2-asym-rev" style={{, marginBottom: 24}}>
         
         {/* Left Side: Report Generator */}
         <div className="card" style={{height: 'fit-content'}}>
@@ -1541,7 +1553,7 @@ function ReportsTab() {
               </select>
             </div>
             
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16}}>
+            <div className="responsive-grid-2">
               <div>
                 <label style={{fontSize: 12, fontWeight: 600, color: 'var(--text-dark)', marginBottom: 6, display: 'block'}}>Target Batch</label>
                 <select className="modal-input" style={{width: '100%'}}>
@@ -1660,7 +1672,7 @@ function DataManagementTab() {
         </div>
       </div>
 
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 24, marginBottom: 24}}>
+      <div className="responsive-grid-2-asym-rev" style={{, marginBottom: 24}}>
         
         {/* Left: Active Data Connections */}
         <div style={{display: 'flex', flexDirection: 'column', gap: 16}}>
@@ -1759,7 +1771,7 @@ function SettingsTab() {
                 <div style={{fontSize: 11, color: 'var(--text-gray)'}}>JPG or PNG, Max 2MB</div>
               </div>
             </div>
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20}}>
+            <div className="responsive-grid-2" style={{, marginBottom: 20}}>
               <div>
                 <label style={{fontSize: 12, fontWeight: 700, color: 'var(--text-dark)', marginBottom: 8, display: 'block'}}>Full Name</label>
                 <input type="text" className="modal-input" defaultValue="Admin User" style={{width: '100%'}}/>
@@ -1868,7 +1880,7 @@ function SettingsTab() {
         <p style={{fontSize: 14, color: 'var(--text-gray)', marginTop: 8}}>Manage your account, set model preferences, and configure security protocols.</p>
       </div>
 
-      <div style={{display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 32}}>
+      <div className="responsive-grid-2-asym-rev">
         
         {/* Left: Settings Nav */}
         <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
