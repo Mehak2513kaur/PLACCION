@@ -10,12 +10,52 @@ st.markdown("Enter the student's details below to predict their placement probab
 # Load the saved model pipeline
 @st.cache_resource
 def load_model():
-    return joblib.load("models/best_model.pkl")
+    try:
+        return joblib.load("models/best_model.pkl")
+    except Exception as e:
+        st.warning("Pre-trained model not found. Training a quick fallback model on the fly... This will only take a moment!")
+        import os
+        from sklearn.ensemble import RandomForestClassifier
+        from sklearn.pipeline import Pipeline
+        from sklearn.compose import ColumnTransformer
+        from sklearn.preprocessing import StandardScaler, OneHotEncoder
+        
+        data_path = "data/student_placement_synthetic.csv"
+        if not os.path.exists(data_path):
+            st.error("Dataset not found. Cannot train fallback model.")
+            st.stop()
+            
+        df = pd.read_csv(data_path)
+        if 'salary_package_lpa' in df.columns:
+            df.drop('salary_package_lpa', axis=1, inplace=True)
+            
+        X = df.drop('placement_status', axis=1)
+        y = df['placement_status']
+        
+        categorical_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_cols = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
+        
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', StandardScaler(), numerical_cols),
+                ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
+            ])
+            
+        # Fast, lightweight Random Forest for the fallback
+        rf = RandomForestClassifier(n_estimators=50, max_depth=10, random_state=42)
+        
+        pipeline = Pipeline(steps=[
+            ('preprocessor', preprocessor),
+            ('classifier', rf)
+        ])
+        
+        pipeline.fit(X, y)
+        return pipeline
 
 try:
     model_pipeline = load_model()
 except Exception as e:
-    st.error(f"Failed to load model. Please make sure to run train.py first.\nError: {e}")
+    st.error(f"Failed to load or train model.\nError: {e}")
     st.stop()
 
 from backend.parser import extract_text_from_pdf, parse_resume_text
