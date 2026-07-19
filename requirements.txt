@@ -3,3 +3,7 @@ pandas
 joblib
 scikit-learn
 xgboost
+fastapi
+uvicorn
+python-multipart
+PyPDF2
