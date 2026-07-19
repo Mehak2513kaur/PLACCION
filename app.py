@@ -18,25 +18,41 @@ except Exception as e:
     st.error(f"Failed to load model. Please make sure to run train.py first.\nError: {e}")
     st.stop()
 
+from backend.parser import extract_text_from_pdf, parse_resume_text
+
 # Input fields
+st.header("📄 Auto-fill with Resume (Optional)")
+uploaded_file = st.file_uploader("Upload your resume (PDF) to automatically fill the fields below:", type=["pdf"])
+
+parsed_data = {}
+if uploaded_file is not None:
+    try:
+        text = extract_text_from_pdf(uploaded_file.read())
+        parsed_data = parse_resume_text(text)
+        st.success(f"Resume parsed successfully! Found skills: {', '.join(parsed_data.get('found_skills', []))}")
+    except Exception as e:
+        st.error(f"Error parsing resume: {e}")
+
+st.divider()
+
 col1, col2 = st.columns(2)
 
 with col1:
     branch = st.selectbox("Branch", ["CSE", "IT", "ECE", "EE", "CE", "ME", "Chemical", "Civil", "Other"])
     college_tier = st.selectbox("College Tier", ["Tier-1", "Tier-2", "Tier-3"])
-    cgpa = st.slider("CGPA", 0.0, 10.0, 7.5, 0.1)
+    cgpa = st.slider("CGPA", 0.0, 10.0, float(parsed_data.get("cgpa", 7.5)), 0.1)
     backlogs = st.number_input("Number of Backlogs", min_value=0, max_value=10, value=0)
-    coding_skills = st.slider("Coding Skills (0-10)", 0.0, 10.0, 5.0, 0.1)
-    dsa_score = st.slider("DSA Score (0-10)", 0.0, 10.0, 5.0, 0.1)
+    coding_skills = st.slider("Coding Skills (0-10)", 0.0, 10.0, float(parsed_data.get("coding_skills", 5.0)), 0.1)
+    dsa_score = st.slider("DSA Score (0-10)", 0.0, 10.0, float(parsed_data.get("dsa_score", 5.0)), 0.1)
     aptitude_score = st.slider("Aptitude Score (0-100)", 0.0, 100.0, 60.0, 0.5)
 
 with col2:
     communication_skills = st.slider("Communication Skills (0-10)", 0.0, 10.0, 6.0, 0.1)
-    ml_knowledge = st.slider("ML Knowledge (0-10)", 0.0, 10.0, 3.0, 0.1)
-    system_design = st.slider("System Design Knowledge (0-10)", 0.0, 10.0, 3.0, 0.1)
-    internships = st.number_input("Number of Internships", min_value=0, max_value=10, value=1)
-    projects_count = st.number_input("Number of Projects", min_value=0, max_value=15, value=2)
-    certifications = st.number_input("Number of Certifications", min_value=0, max_value=20, value=0)
+    ml_knowledge = st.slider("ML Knowledge (0-10)", 0.0, 10.0, float(parsed_data.get("ml_knowledge", 3.0)), 0.1)
+    system_design = st.slider("System Design Knowledge (0-10)", 0.0, 10.0, float(parsed_data.get("system_design", 3.0)), 0.1)
+    internships = st.number_input("Number of Internships", min_value=0, max_value=10, value=int(parsed_data.get("internships", 1)))
+    projects_count = st.number_input("Number of Projects", min_value=0, max_value=15, value=int(parsed_data.get("projects_count", 2)))
+    certifications = st.number_input("Number of Certifications", min_value=0, max_value=20, value=int(parsed_data.get("certifications", 0)))
     hackathons = st.number_input("Number of Hackathons Participated", min_value=0, max_value=15, value=0)
 
 col3, col4 = st.columns(2)
